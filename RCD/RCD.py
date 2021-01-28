@@ -6,10 +6,8 @@ import string
 import sys
 
 # 读入数据
-source = 'normal_data.csv'
-tmp_instances = []
+source = 'normal_data500.csv'
 instances = []
-tmp_labels = []
 labels = []
 
 with open(source, 'rb') as sourcefp:
@@ -18,30 +16,9 @@ with open(source, 'rb') as sourcefp:
         coordinate = (float(tmp[1]), int(float(tmp[2])), int(float(tmp[3])), int(float(tmp[4])), float(tmp[5]),
                       float(tmp[6]), int(float(tmp[7])), float(tmp[8]), float(tmp[9]), float(tmp[10]), float(tmp[11]))
         label = (int(float(tmp[0])), int(float(tmp[12])))
-        tmp_instances.append(coordinate)
-        tmp_labels.append(label)
-
-# 去掉重复的点
-def updateLabel(index):
-    for i in range(0, len(tmp_labels), 1):
-        if tmp_labels[i][0] == index + 1:
-            tmp_labels.remove(tmp_labels[i])
-            break
-
-pos = []
-for i in range(0, len(tmp_instances), 1):
-    if tmp_instances.count(tmp_instances[i]) > 1:
-        for j in range(0, len(tmp_instances), 1):
-            if tmp_instances[i] == tmp_instances[j] and j != tmp_instances.index(tmp_instances[j]) and j not in pos:
-                updateLabel(j)
-
-for i in tmp_instances:
-    if i not in instances:
-        instances.append(i)
-for i in range(0, len(tmp_labels), 1):
-    labels.append((i+1, tmp_labels[i][1]))
+        instances.append(coordinate)
+        labels.append(label)
 instancesBackup = instances
-
 for instance in instances:
     print(instance)
 for label in labels:
@@ -50,7 +27,6 @@ for label in labels:
 x, y = zip(*labels)
 p.scatter(x, y, 20, color="#0000FF")
 p.show()
-# sys.exit(0)
 
 # KList参数设定
 kLength = int(math.log(len(instances), 2))
@@ -68,18 +44,17 @@ resLabel = [[] for i in range(len(instances))]
 # 局部结果集合Ur
 Ur = []
 # 颜色数组
-colors = ["#FF0000", "#3300FF", "#00FF00",
-          "#CD7F32", "#FFFF00", "#FFF0F5", "#6A5ACD"]
-
+colors = ["#FF0000", "#3300FF", "#00FF00", "#CD7F32", "#FFFF00", "#FFF0F5",
+          "#6A5ACD", "#008000", "#FF69B4", "#F08080", "#FAF0E6", "#808000", "#FFC0CB"]
 
 # 初始化KList
 for i in range(0, kLength, 1):
     tmp = tmp*2
     kList.append(tmp)
 print("Klist :", kList)
-
-
 # 更新邻接矩阵M
+
+
 def update():
     # 计算邻接矩阵M
     for instance in instances:
@@ -89,9 +64,9 @@ def update():
         (k_distance_value, neighbours) = k_distance(
             len(instances_value_backup), instance, instances_value_backup)
         M[instances.index(instance)] = neighbours
-
-
 # 计算Kinf
+
+
 def cal_K_inf():
     for instance in instances:
         kmin = float("inf")
@@ -120,9 +95,9 @@ def pre_cal_c1():
 # 计算C1
 def cal_C1(instance):
     return pre_c1[instances.index(instance)]
-
-
 # 计算C2
+
+
 def cal_C2(instance):
     sum_c1 = 0
     index = instances.index(instance)
@@ -134,9 +109,9 @@ def cal_C2(instance):
             sum_c1 += pre_c1[instances.index(b)]
     c2 = sum_c1/k_inf
     return c2
-
-
 # 计算C3
+
+
 def cal_C3(instance):
     k_inf = kinf[instances.index(instance)]
     k_avg = (2 + k_inf)/2
@@ -146,9 +121,9 @@ def cal_C3(instance):
 
     c3 = k1/k2
     return c3
-
-
 # 计算C4
+
+
 def cal_C4(instance):
     index = instances.index(instance)
     k_inf_a = kinf[instances.index(instance)]
@@ -162,9 +137,9 @@ def cal_C4(instance):
     mid_value = abs(k_inf_a/(k_inf_b/k_inf_a)-1)
     c4 = math.exp(mid_value)
     return c4
-
-
 # 计算C
+
+
 def cal_C(instance):
     c1 = cal_C1(instance)
     c2 = cal_C2(instance)
@@ -174,8 +149,9 @@ def cal_C(instance):
     # print(instances.index(instance),'c',c)
     return c
 
-
 # 扩展集合
+
+
 def expand(center, init_instances):
     instances_backup = list(init_instances)
     instances_backup.remove(center)
@@ -199,8 +175,9 @@ def expand(center, init_instances):
                     init_instances.append(c)
     # print(len(init_instances))
 
-
 # 扩展Klist
+
+
 def refine(rc):
     min_value = float("inf")
 
@@ -279,11 +256,13 @@ while True:
         group += 1
         remain = set(instances) - set(C)
         instances = list(remain)
-
     else:
-        break
+        if len(instances) != 0:
+            Ures[group] = list(instances)
+            group += 1
     if len(instances) == 0:
         break
+
 for i in range(0, group, 1):
     for instance in Ures[i]:
         index = instancesBackup.index(instance)
@@ -295,4 +274,6 @@ for i in range(0, group, 1):
     for c in resLabel[i]:
         color = colors[i]
         p.scatter(c[0], c[1], color=color)
+
+# 画图
 p.show()
