@@ -6,7 +6,7 @@ import string
 import sys
 
 # 读入数据
-source = 'normal_data500.csv'
+source = 'normal_data250.csv'
 instances = []
 labels = []
 
@@ -52,9 +52,8 @@ for i in range(0, kLength, 1):
     tmp = tmp*2
     kList.append(tmp)
 print("Klist :", kList)
+
 # 更新邻接矩阵M
-
-
 def update():
     # 计算邻接矩阵M
     for instance in instances:
@@ -64,9 +63,8 @@ def update():
         (k_distance_value, neighbours) = k_distance(
             len(instances_value_backup), instance, instances_value_backup)
         M[instances.index(instance)] = neighbours
+
 # 计算Kinf
-
-
 def cal_K_inf():
     for instance in instances:
         kmin = float("inf")
@@ -79,7 +77,6 @@ def cal_K_inf():
         # print(instances.index(instance),'kinf',k_inf)
     print("Kinf:\n", kinf)
 
-
 def pre_cal_c1():
     for instance in instances:
         k_inf = kinf[instances.index(instance)]
@@ -91,13 +88,11 @@ def pre_cal_c1():
         # print(instances.index(instance),'c1',pre_c1[instances.index(instance)])
     print("pre_c1:\n", pre_c1)
 
-
 # 计算C1
 def cal_C1(instance):
     return pre_c1[instances.index(instance)]
+
 # 计算C2
-
-
 def cal_C2(instance):
     sum_c1 = 0
     index = instances.index(instance)
@@ -109,9 +104,8 @@ def cal_C2(instance):
             sum_c1 += pre_c1[instances.index(b)]
     c2 = sum_c1/k_inf
     return c2
+
 # 计算C3
-
-
 def cal_C3(instance):
     k_inf = kinf[instances.index(instance)]
     k_avg = (2 + k_inf)/2
@@ -121,9 +115,8 @@ def cal_C3(instance):
 
     c3 = k1/k2
     return c3
+
 # 计算C4
-
-
 def cal_C4(instance):
     index = instances.index(instance)
     k_inf_a = kinf[instances.index(instance)]
@@ -137,9 +130,8 @@ def cal_C4(instance):
     mid_value = abs(k_inf_a/(k_inf_b/k_inf_a)-1)
     c4 = math.exp(mid_value)
     return c4
+
 # 计算C
-
-
 def cal_C(instance):
     c1 = cal_C1(instance)
     c2 = cal_C2(instance)
@@ -150,8 +142,6 @@ def cal_C(instance):
     return c
 
 # 扩展集合
-
-
 def expand(center, init_instances):
     instances_backup = list(init_instances)
     instances_backup.remove(center)
@@ -176,8 +166,6 @@ def expand(center, init_instances):
     # print(len(init_instances))
 
 # 扩展Klist
-
-
 def refine(rc):
     min_value = float("inf")
 
@@ -194,7 +182,6 @@ def refine(rc):
     kList.sort()
     # print("New klist is \n",kList)
 
-
 while True:
     print("New instances is \n", instances)
     lof = LOF(instances)
@@ -207,7 +194,7 @@ while True:
         kinf.append(0)
     for k in kList:
         if k >= len(instances):
-            kList[0:kList.index(k)]
+            kList = kList[0:kList.index(k)]
             break
     print("kList is", kList)
 
@@ -260,6 +247,7 @@ while True:
         if len(instances) != 0:
             Ures[group] = list(instances)
             group += 1
+            instances = []
     if len(instances) == 0:
         break
 
