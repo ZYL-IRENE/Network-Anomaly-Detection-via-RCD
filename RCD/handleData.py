@@ -12,8 +12,8 @@ max = np.array([0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
 
 
 def handleData():
-    source = 'test_data250.csv'
-    result = 'selected_data250.csv'
+    source = 'test_data256.csv'
+    result = 'selected_data256.csv'
     sourcefp = open(source, 'r')
     resultfp = open(result, 'w', newline='')
     reader = csv.reader(sourcefp)
@@ -79,8 +79,8 @@ def label(type):
 
 
 def Remove():
-    source = 'selected_data250.csv'
-    result = 'removed_data250.csv'
+    source = 'selected_data256.csv'
+    result = 'removed_data256.csv'
     sourcefp = open(source, 'r')
     resultfp = open(result, 'w', newline='')
     reader = csv.reader(sourcefp)
@@ -133,8 +133,8 @@ def Remove():
 
 
 def standardization():
-    source = 'removed_data250.csv'
-    result = 'standard_data250.csv'
+    source = 'removed_data256.csv'
+    result = 'standard_data256.csv'
     sourcefp = open(source, 'r')
     resultfp = open(result, 'w', newline='')
     reader = csv.reader(sourcefp)
@@ -186,8 +186,8 @@ def standardization():
 
 
 def normalization():
-    source = 'standard_data250.csv'
-    result = 'normal_data250.csv'
+    source = 'standard_data256.csv'
+    result = 'normal_data256.csv'
     sourcefp = open(source, 'r')
     resultfp = open(result, 'w', newline='')
     reader = csv.reader(sourcefp)

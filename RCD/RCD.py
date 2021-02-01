@@ -6,7 +6,7 @@ import string
 import sys
 
 # 读入数据
-source = 'normal_data250.csv'
+source = 'normal_data256.csv'
 instances = []
 labels = []
 
@@ -26,13 +26,14 @@ for label in labels:
 
 x, y = zip(*labels)
 p.scatter(x, y, 20, color="#0000FF")
+p.savefig('/home/PsyduckLiu/pics/PRP-RCD/init-log256.png')
 p.show()
 
 # KList参数设定
 kLength = int(math.log(len(instances), 2))
 # kLength = int(len(instances) / 2)
 kList = []
-tmp = 1
+tmp = 0 
 # 邻接矩阵M
 M = [[] for i in range(len(instances))]
 pre_c1 = [list() for i in range(len(instances))]
@@ -49,7 +50,7 @@ colors = ["#FF0000", "#3300FF", "#00FF00", "#CD7F32", "#FFFF00", "#FFF0F5",
 
 # 初始化KList
 for i in range(0, kLength, 1):
-    tmp = tmp*2
+    tmp = tmp + 2
     kList.append(tmp)
 print("Klist :", kList)
 
@@ -193,9 +194,11 @@ while True:
         pre_c1.append(0)
         kinf.append(0)
     for k in kList:
-        if k >= len(instances):
+        if k > len(instances):
             kList = kList[0:kList.index(k)]
             break
+    if len(instances) == 1 and len(kList) == 0:
+        kList.append(1)
     print("kList is", kList)
 
     update()
@@ -262,6 +265,6 @@ for i in range(0, group, 1):
     for c in resLabel[i]:
         color = colors[i]
         p.scatter(c[0], c[1], color=color)
-
+p.savefig('/home/PsyduckLiu/pics/PRP-RCD/final-log256+2.png')
 # 画图
 p.show()
