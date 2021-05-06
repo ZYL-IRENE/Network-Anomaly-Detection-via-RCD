@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>intrusion detection system</title>
+
+    <link rel="stylesheet" href="../static/css/bootstrap.css">
+    <script src="../static/js/jquery-3.6.0.js"></script>
+    <script src="../static/js/bootstrap/bootstrap.js"></script>
+
+    <link rel="stylesheet" href="../static/css/bootstrap-table.css">
+    <script src="../static/js/bootstrap/bootstrap-table.js"></script>
+    <script src="../static/js/bootstrap/bootstrap-table-zh-CN.js"></script>
+    <script src="../static/js/bootstrap/tableExport.js"></script>
+    <script src="../static/js/bootstrap/bootstrap-table-export.js"></script>
+
+
+    <style>
+        body,html{
+            width:100%;
+            height:100%;
+            }
+        .view{
+            position: absolute;
+            border-style: box;
+            border:1px solid;
+            border-color:#a1a1a1;
+            box-sizing:content-box;
+            margin: 0;
+        }
+        #view1{
+            width: 70%;
+            height: 20%;
+            left:0px;
+            top:80%;
+
+        }
+        #view2{
+            width: 25%;
+            height: 80%;
+            left:0px;
+            top:0px;
+        }
+        #view3{
+            width: 45%;
+            height: 80%;
+            left: 25%;
+            top: 0px;
+        }
+        #view4{
+            width: 30%;
+            height: 100%;
+            left:70%;
+            top:0px;
+        }
+        #view_table{
+            white-space:nowrap;
+            overflow:hidden
+        }
+
+    </style>
+</head>
+<body>
+    <div class="view" id="view1" >
+        <table id="view_table" ></table>
+    </div>
+    <div class="view" id="view2" style="overflow-y:scroll">
+        展示选中数据的详细信息。专家标记的输入框。
+    </div>
+    <div class="view" id="view3">
+        展示数据的关联关系。可选择维度进行展示（散点）
+    </div>
+    <div class="view" id="view4">
+        展示已有的规则库。（类似晴雨表）
+        <br>下方为选中数据与规则库的比对
+    </div>
+    <script src="../static/js/showTable.js"></script>
+    <script>
+
+
+</script>
+
+</body>
+</html>
