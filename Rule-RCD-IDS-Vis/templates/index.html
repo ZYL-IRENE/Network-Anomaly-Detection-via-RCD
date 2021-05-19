@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>intrusion detection system</title>
+
+    <link rel="stylesheet" href="../static/css/bootstrap.css">
+    <link rel="stylesheet" href="../static/css/bootstrap-select.css">
+
+    <script src="../static/js/jquery-3.6.0.js"></script>
+    <script src="../static/js/bootstrap/bootstrap.js"></script>
+
+    <link rel="stylesheet" href="../static/css/bootstrap-table.css">
+    <script src="../static/js/bootstrap/bootstrap-table.js"></script>
+    <script src="../static/js/bootstrap/bootstrap-table-zh-CN.js"></script>
+    <script src="../static/js/bootstrap/tableExport.js"></script>
+    <script src="../static/js/bootstrap/bootstrap-table-export.js"></script>
+    <script src="../static/js/echarts.js"></script>
+    <script src="../static/js/bootstrap/bootstrap-select.js"></script>
+
+    <style>
+        body,html{
+            width:100%;
+            height:100%;
+            }
+        .view{
+            position: absolute;
+            border-style: box;
+            border:0.5px solid;
+            border-color:#90a4ae;
+            box-sizing:content-box;
+            margin: 0;
+        }
+        #view1{
+            width: 70%;
+            height: 20%;
+            left:0px;
+            top:80%;
+        }
+        #view2{
+            width: 25%;
+            height: 68%;
+            left:0px;
+            top:0px;
+        }
+        #view3{
+            width: 45%;
+            height: 80%;
+            left: 25%;
+            top: 0px;
+        }
+        #view4{
+            width: 30%;
+            height: 40%;
+            left:70%;
+            top:0px;
+        }
+        #view5{
+            width: 30%;
+            height: 60%;
+            left:70%;
+            top: 40%;
+        }
+        #view6{
+            width: 25%;
+            height: 12%;
+            left:0px;
+            top:68%;
+        }
+        #view_table{
+            white-space:nowrap;
+            overflow:hidden
+        }
+        #parallel_coord{
+            width: 100%;
+            height: 100%;
+        }
+        #scatter_plot{
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+        }
+        #feature_select{
+            position: absolute;
+            top: 10%;
+            left: 5%;
+        }
+        #kernel{
+            position: absolute;
+            bottom: 1%;
+            left: 5%;
+        }
+        #para_confirm{
+            position: absolute;
+            bottom: 5%;
+            left: 75%;
+        }
+        #parameter_set{
+            width: 100%;
+            height: 10%;
+        }
+        #radar_plot{
+            width: 100%;
+            height: 100%;
+        }
+        #heat_map{
+            width: 100%;
+            height: 77%;
+            top: 3%;
+        }
+        #rare_heat_map{
+            width: 100%;
+            height: 8%;
+            top: 2%;
+        }
+        #rule_nav{
+            width: 100%;
+            height: 10%;
+            top: 0;
+        }
+        #dimension_method{
+            left: 20%;
+            width: 80%
+            top:10%;
+            position: absolute;
+        }
+
+
+
+
+
+    </style>
+</head>
+<body>
+    <div class="view" id="view1" >
+        <div id="parallel_coord"></div>
+    </div>
+    <div class="view" id="view2" > <!--style="overflow-y:scroll" -->
+        <table id="view_table" style="word-break:break-all;"></table>
+    </div>
+    <div class="view" id="view6" >
+        <div id="parameter_set">
+            <div id="feature_select">
+                <select class="selectpicker"  data-width="340px" multiple title="Choose Features">
+                    <option> duration </option>
+                    <option> service </option>
+                    <option> flag </option>
+                    <option> src_bytes </option>
+                    <option> dst_bytes </option>
+                    <option> count </option>
+                    <option> serror_rate </option>
+                    <option> srv_rerror_rate </option>
+                    <option> same_srv_rate </option>
+                    <option> dst_host_count </option>
+                    <option> dst_host_srv_count </option>
+                    <option> dst_host_same_src_port_rate </option>
+                    <option> dst_host_serror_rate </option>
+                    <option> dst_host_srv_serror_rate </option>
+                    <option> class </option>
+                </select>
+            </div>
+            <div id="kernel" class="radio">
+                <label>
+                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked> Use Kernel
+                </label>
+            </div>
+            <button id="para_confirm" type="button" class="btn btn-primary active">Confirm</button>
+        </div>
+    </div>
+    <div class="view" id="view3">
+        <div id="dimension_method">
+            <div  class="radio">
+                <label>
+                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked> MDS
+                </label>
+                <label>
+                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked> LDA
+                </label>
+                <label>
+                    <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked> T-SNE
+                </label>
+            </div>
+        </div>
+        <div id="scatter_plot"></div>
+
+
+    </div>                                                             
+    <div class="view" id="view4">
+            <div id="radar_plot"></div>
+    </div>
+    <div class="view" id="view5">
+        <div id="rule_nav">
+            <ul class="nav nav-tabs">
+              <li role="presentation" class="active"><a href="#">Normal</a></li>
+              <li role="presentation"><a href="#">DOS</a></li>
+                <li role="presentation"><a href="#">Probing</a></li>
+              <li role="presentation"><a href="#">U2R</a></li>
+                <li role="presentation"><a href="#">R2L</a></li>
+            </ul>
+        </div>
+        <div id="rare_heat_map"></div>
+        <div id="heat_map"></div>
+
+    </div>
+
+    <script src="../static/js/showTable.js"></script>
+    <script src="../static/js/parallel_coord.js"></script>
+    <script src="../static/js/scatter_plot.js"></script>
+    <script src="../static/js/heat_map.js"></script>
+    <script src="../static/js/rare_heat_map.js"></script>
+    <script>
+
+
+</script>
+
+</body>
+</html>
