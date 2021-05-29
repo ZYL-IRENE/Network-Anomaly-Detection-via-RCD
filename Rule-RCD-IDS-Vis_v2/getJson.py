@@ -1,4 +1,5 @@
 import json
+from pandas import DataFrame
 import pandas as pd
 from sklearn.manifold import MDS
 from sklearn.manifold import TSNE
@@ -19,8 +20,8 @@ def get_test_data_json(fileway):
     key = ["duration", "service", "flag", "src_bytes", "dst_bytes", "count", "serror_rate", "srv_rerror_rate",
            "same_srv_rate", "dst_host_count", "dst_host_srv_count", "dst_host_same_src_port_rate",
            "dst_host_serror_rate",
-           "dst_host_srv_serror_rate", "class"]
-    key_index = [1, 3, 4, 5, 6, 23, 25, 28, 29, 32, 33, 36, 38, 39, 42]
+           "dst_host_srv_serror_rate"]
+    key_index = [1, 3, 4, 5, 6, 23, 25, 28, 29, 32, 33, 36, 38, 39]
     value = []
     for k in key_index:
         value.append(list(df[k - 1]))
@@ -48,23 +49,13 @@ def scatter_get_tsne_data_json(fileway,selected):
     label = []
     value = []
 
-    for k in key_index:
-        value.append(list(df[k - 1]))
+    for k in range(0,len(key_index)):
+        value.append(list(df[k]))
 
     data = pd.DataFrame(value)
     data = data.transpose().values
     label = data[:,data.shape[1]-1]
     data = data[:,0:data.shape[1]-1]
-
-    if 3 in selected: 
-        for i in range(0, data.shape[0]):
-            data[i][selected.index(3)] = services.index(data[i][selected.index(3)])
-    if 4 in selected: 
-        for i in range(0, data.shape[0]):
-            data[i][selected.index(4)] = flags.index(data[i][selected.index(4)])
-    for i in range(0, data.shape[0]):
-        label[i] = classes.index(label[i])
-
     data_embedded = TSNE(n_components=2).fit_transform(data)
     # data_embedded = preprocessing.MinMaxScaler().fit_transform(data_embedded)
 
@@ -91,23 +82,13 @@ def scatter_get_mds_data_json(fileway,selected):
     label = []
     value = []
 
-    for k in key_index:
-        value.append(list(df[k - 1]))
+    for k in range(0,len(key_index)):
+        value.append(list(df[k]))
 
     data = pd.DataFrame(value)
     data = data.transpose().values
     label = data[:,data.shape[1]-1]
     data = data[:,0:data.shape[1]-1]
-
-    if 3 in selected: 
-        for i in range(0, data.shape[0]):
-            data[i][selected.index(3)] = services.index(data[i][selected.index(3)])
-    if 4 in selected: 
-        for i in range(0, data.shape[0]):
-            data[i][selected.index(4)] = flags.index(data[i][selected.index(4)])
-    for i in range(0, data.shape[0]):
-        label[i] = classes.index(label[i])
-
     data_embedded = MDS(n_components=2).fit_transform(data)
     # data_embedded = preprocessing.MinMaxScaler().fit_transform(data_embedded)
 
@@ -134,22 +115,13 @@ def scatter_get_lda_data_json(fileway,selected):
     label = []
     value = []
 
-    for k in key_index:
-        value.append(list(df[k - 1]))
+    for k in range(0,len(key_index)):
+        value.append(list(df[k]))
 
     data = pd.DataFrame(value)
     data = data.transpose().values
     label = data[:,data.shape[1]-1]
     data = data[:,0:data.shape[1]-1]
-
-    if 3 in selected: 
-        for i in range(0, data.shape[0]):
-            data[i][selected.index(3)] = services.index(data[i][selected.index(3)])
-    if 4 in selected: 
-        for i in range(0, data.shape[0]):
-            data[i][selected.index(4)] = flags.index(data[i][selected.index(4)])
-    for i in range(0, data.shape[0]):
-        label[i] = classes.index(label[i])
     label = label.astype('int')
     label = label.ravel()
 
@@ -235,3 +207,70 @@ def circle_get_test_data_json(fileway):
         data_json.append(mydict)
 
     return data_json
+
+def rule_get():
+    page_max = 7
+    rule_num = {"normal.":0, "DOS.":0, "Probing.":0, "U2R.":0, "R2L.":0}
+    rule_json = {"normal.":[], "DOS.":[], "Probing.":[], "U2R.":[], "R2L.":[]}
+    features = ["duration", "service", "flag", "src_bytes", "dst_bytes", "count", "serror_rate", "srv_rerror_rate",
+                "same_srv_rate", "dst_host_count", "dst_host_srv_count", "dst_host_same_src_port_rate",
+                "dst_host_serror_rate", "dst_host_srv_serror_rate"]
+
+    with open("static/data/rule.json", 'r') as f:
+        rules = json.load(f)
+
+    for ant, cons, conf, lift in rules:
+        index = rule_num[cons[0]]
+        rule_num[cons[0]] = index+1
+        if index < page_max:
+            for a in ant:
+                feature = a[:-7]
+
+                if a in services:
+                    value = 2
+                    feature = "service"
+                elif a in flags:
+                    value = 5
+                    feature = "flag"
+                else:
+                    feature = a[:-7]
+                    value = int(a[-1])
+                feature_index = features.index(feature)
+                rule_json[cons[0]].append([index, feature_index, value])
+        else:
+            continue
+
+    return rule_json
+
+def feature_corr(fileway):
+    data_file = fileway
+    key_index = [0, 2, 3, 4, 5, 22, 24, 27, 28, 31, 32, 35, 37, 38]
+    df = pd.read_csv(data_file, sep=',',usecols= key_index, header=None)
+
+    data = df.values
+    for i in range(0,data.shape[0]):
+        data[i][1] = services.index(data[i][1])
+        data[i][2] = flags.index(data[i][2])
+
+    data = pd.DataFrame(data)
+    data = data.astype(float)
+    data = (data - data.min())/ (data.max() - data.min())
+
+    corr = data.corr().abs()
+    #corr = (corr - corr.min()) *10 / (corr.max() - corr.min())
+    corr = corr*10
+    corr = corr.round(2).values.tolist()
+
+    return_corr = []
+    index = list(range(0,14))
+
+    for line in corr:
+        temp = 14*[corr.index(line)]
+        a = list(map(list,zip(index, temp, line)))
+        return_corr.extend(a)
+
+    var = data.var().round(3).tolist()
+
+
+    return return_corr, var
+
