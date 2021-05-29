@@ -166,7 +166,8 @@ $(function (){
 
             RadarChart.setOption({
                 tooltip: {
-                    trigger: 'item'
+                    trigger: 'item',
+                    position: 'bottom'
                 },
                 radar: {
                     indicator: [

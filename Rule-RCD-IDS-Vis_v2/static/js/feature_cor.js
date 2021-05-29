@@ -12,8 +12,8 @@ function addLoadEvent(func) {
 }
 
 
-function HeatMap() {
-    var myChart = echarts.init(document.getElementById('heat_map'));
+function Feature_cor() {
+    var myChart = echarts.init(document.getElementById('feature_ccorrelation'));
 
     var features = ["duration", "service", "flag", "src_bytes", "dst_bytes", "count", "serror_rate", "srv_rerror_rate", "same_srv_rate", "dst_host_count", "dst_host_srv_count", "dst_host_same_src_port_rate", "dst_host_serror_rate", "dst_host_srv_serror_rate"];
     var days = ['Saturday', 'Friday', 'Thursday',
@@ -29,15 +29,17 @@ function HeatMap() {
         tooltip: {
             position: 'top',
             formatter: function (params) {
-                return  features[params.value[0]] ;
+                return params.value[2]/10 + '<br/>' + features[params.value[0]] + ' <br/> ' + features[params.value[1]];
             }
         },
         grid: {
-            height: '80%',
-            width: '85%',
-            top: '0%'
+            height: '98%',
+            width: '98%',
+            top: '1%',
+            left:'1%',
+
         },
-        gradientColor:['#b3e5fc','#5470c6'],//#b3e5fc,#5c6bc0,#5470c6
+        gradientColor:['#e8eaf6','#5470c6'],
         xAxis: {
             type: 'category',
             data: features,
@@ -45,22 +47,23 @@ function HeatMap() {
                 show: true
             },
             axisLabel:{ rotate:40,},
-            show: true
+            show: false
         },
         yAxis: {
             type: 'category',
-            data: days,
+            data: features,
             splitArea: {
                 show: true
             },
+            axisLabel:{ rotate:0,},
             show: false
         },
         visualMap: {
-            min: 1,
-            max: 5,
+            min: 0,
+            max: 10,
             calculable: true,
             orient: 'horizontal',
-            left: 'center',
+            left: '0',
             bottom: '15%',
             show: false
         }
@@ -80,10 +83,10 @@ function HeatMap() {
         // }]
     };
 
-    $.get('/heatMap').done(function (data) {
-        console.log("rule",data["normal."]);
+    $.get('/featureCorr').done(function (data) {
 
-        myData = data["normal."]
+        myData = data
+
         mydata = myData.map(function (item) {
             return [item[1], item[0], item[2] || '-'];
         });
@@ -94,7 +97,7 @@ function HeatMap() {
                 type: 'heatmap',
                 data: mydata,
                 label: {
-                    show: true
+                    show: false
                 },
                 emphasis: {
                     itemStyle: {
@@ -110,4 +113,4 @@ function HeatMap() {
 
 }
 
-addLoadEvent(HeatMap);
+addLoadEvent(Feature_cor);

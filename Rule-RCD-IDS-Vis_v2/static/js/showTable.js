@@ -39,12 +39,21 @@ $(function () {
             events: { 'change .ss': function (e, value, row, index) { } },
             formatter: function (value, row, index) {
                 var strHtml = "";
-                if (value == "normal.") {
-                    strHtml = "<select class='ss' ><option value='normal.' selected='selected'>normal</option><option value='DOS.'>DOS</option><option value='Probing.'>Probing</option><option value='U2R.'>U2R</option><option value='R2L.'>R2L</option></select>";
+
+                if (value == "DOS") {
+                    strHtml = "<select class='ss' ><option value='normal' >normal</option><option value='DOS' selected='selected'>DOS</option><option value='PROBE'>PROBE</option><option value='U2R'>U2R</option><option value='R2L'>R2L</option></select>";
                 }
-                else {
-                    strHtml = "<select class='ss'><option value='normal.' >normal</option><option value='DOS.' selected='selected'>DOS</option><option value='Probing.'>Probing</option><option value='U2R.'>U2R</option><option value='R2L.'>R2L</option></select>";
+                else if (value == "PROBE") {
+                    strHtml = "<select class='ss' ><option value='normal' >normal</option><option value='DOS'>DOS</option><option value='PROBE' selected='selected'>PROBE</option><option value='U2R'>U2R</option><option value='R2L'>R2L</option></select>";
                 }
+                else if (value == "U2R") {
+                    strHtml = "<select class='ss' ><option value='normal' >normal</option><option value='DOS'>DOS</option><option value='PROBE'>PROBE</option><option value='U2R' selected='selected'>U2R</option><option value='R2L'>R2L</option></select>";
+                }
+                else if (value == "R2L") {
+                    strHtml = "<select class='ss' ><option value='normal' >normal</option><option value='DOS'>DOS</option><option value='PROBE'>PROBE</option><option value='U2R'>U2R</option><option value='R2L' selected='selected'>R2L</option></select>";
+                }
+                else
+                    strHtml = "<select class='ss' onchange='Change($(this))'><option value='normal' selected='selected'>normal</option><option value='DOS'>DOS</option><option value='PROBE'>PROBE</option><option value='U2R'>U2R</option><option value='R2L'>R2L</option></select>";
                 return strHtml;
 
             }
@@ -115,35 +124,16 @@ $(function () {
         ],
     });
 });
-/*,{
-                field: 'class',
-                title:'类别',
-                formatter: function (value, row , index) {
-                return '<input type="text" name="class" value="" onblur="changeData('+ index +', this);" />';
-           }
 
-            }*/
-
-function changeData(index, obj) {
-    var value = $(obj).val();
-    var name = $(obj).attr('name');
-    //通过 index 获取指定的行
-    myTable.bootstrapTable('updateCell', { index: index, field: 'class', value: value });
-    //var row = myTable.bootstrapTable('getOptions').data[index];
-    //将 input 的值存进 row 中
-    // row[name] = value;
-    //更新指定的行，调用 'updateRow' 则会将 row 数据更新到 data 中，然后再重新加载
-    myTable.bootstrapTable('updateRow', { index: index, row: row });
-}
-
-$(".ss").change(function () {
+function Change(obj) {
     console.log("lalala");
-    var indexSelected = $(this).parent().parent()[0].rowIndex - 1;
-    var valueSelected = $(this).children('option:selected').val();
+    var indexSelected = obj.parent().parent()[0].rowIndex - 1;
+    var valueSelected = obj.children('option:selected').val();
+    console.log(indexSelected,valueSelected);
     myTable.bootstrapTable('updateCell', {
         index: indexSelected,
         field: 'class',
         value: valueSelected
     })
+}
 
-});
