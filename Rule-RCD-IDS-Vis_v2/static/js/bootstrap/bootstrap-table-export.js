@@ -24,6 +24,7 @@ $.extend($.fn.bootstrapTable.defaults, {
   exportDataType: 'basic', // basic, all, selected
   exportTypes: ['json', 'xml', 'csv', 'txt', 'sql', 'excel'],
   exportOptions: {
+    ignoreColumn: [0],
     onCellHtmlData (cell, rowIndex, colIndex, htmlData) {
       if (cell.is('th')) {
         return cell.find('.th-inner').text()
@@ -179,7 +180,6 @@ $.BootstrapTable = class extends $.BootstrapTable {
     const o = this.options
     const stateField = this.header.stateField
     const isCardView = o.cardView
-
     const doExport = callback => {
       if (stateField) {
         this.hideColumn(stateField)
@@ -225,7 +225,6 @@ $.BootstrapTable = class extends $.BootstrapTable {
       }
 
       const hiddenColumns = this.getHiddenColumns()
-
       hiddenColumns.forEach(row => {
         if (row.forceExport) {
           this.showColumn(row.field)
@@ -282,7 +281,8 @@ $.BootstrapTable = class extends $.BootstrapTable {
       this.options.virtualScroll = false
       this.togglePagination()
       this.trigger('export-saved', this.getData())
-    } else if (o.exportDataType === 'selected') {
+    } 
+    else if (o.exportDataType === 'selected') {
       let data = this.getData()
       let selectedData = this.getSelections()
       const pagination = o.pagination
@@ -313,7 +313,8 @@ $.BootstrapTable = class extends $.BootstrapTable {
         this.load(data)
       })
       this.trigger('export-saved', selectedData)
-    } else {
+    } 
+    else {
       doExport()
       this.trigger('export-saved', this.getData(true))
     }

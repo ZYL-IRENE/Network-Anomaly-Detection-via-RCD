@@ -2018,15 +2018,54 @@
 
         if ($cell[0].hasAttribute('data-tableexport-canvas')) {
           htmlData = '';
-        } else if ($cell[0].hasAttribute('data-tableexport-value')) {
+        } 
+        else if ($cell[0].hasAttribute('data-tableexport-value')) {
           htmlData = $cell.attr('data-tableexport-value');
           htmlData = htmlData ? htmlData + '' : '';
           $cell.data('teUserDefText', 1);
-        } else {
+        } 
+        else {
           htmlData = $cell.html();
-
+          
           if (typeof defaults.onCellHtmlData === 'function') {
-            htmlData = defaults.onCellHtmlData($cell, rowIndex, colIndex, htmlData);
+            // htmlData = defaults.onCellHtmlData($cell, rowIndex, colIndex, htmlData);
+            var html = $.parseHTML(htmlData);
+            var inputidx = 0;
+            var selectidx = 0;
+
+            htmlData = '';
+            $.each(html, function () {
+              
+              if ($(this).is('input')) {
+                htmlData += $cell.find('input').eq(inputidx++).val();
+              }
+              else if ($(this).is('select')) {
+                htmlData += $cell.find('select option:selected').eq(selectidx++).text();
+              }
+              else if ($(this).is('br')) {
+                htmlData += '<br>';
+              }
+              else {
+                if (typeof $(this).html() === 'undefined')
+                  htmlData += $(this).text();
+                else if (jQuery().bootstrapTable === undefined ||
+                  ($(this).hasClass('fht-cell') === false &&  // BT 4
+                    $(this).hasClass('filterControl') === false &&
+                    $cell.parents('.detail-view').length === 0))
+                  htmlData += $(this).html();
+
+                if ($(this).is('a')) {
+                  var href = $cell.find('a').attr('href') || '';
+                  if (typeof defaults.onCellHtmlHyperlink === 'function')
+                    result += defaults.onCellHtmlHyperlink($cell, rowIndex, colIndex, href, htmlData);
+                  else if (defaults.htmlHyperlink === 'href')
+                    result += href;
+                  else // 'content'
+                    result += htmlData;
+                  htmlData = '';
+                }
+              }
+            });
             $cell.data('teUserDefText', 1);
           }
           else if (htmlData !== '') {
@@ -2036,6 +2075,7 @@
 
             htmlData = '';
             $.each(html, function () {
+              
               if ($(this).is('input')) {
                 htmlData += $cell.find('input').eq(inputidx++).val();
               }
@@ -2068,10 +2108,11 @@
             });
           }
         }
-
+      
         if (htmlData && htmlData !== '' && defaults.htmlContent === true) {
           result = $.trim(htmlData);
-        } else if (htmlData && htmlData !== '') {
+        } 
+        else if (htmlData && htmlData !== '') {
           var cellFormat = $cell.attr('data-tableexport-cellformat');
 
           if (cellFormat !== '') {
@@ -2111,7 +2152,8 @@
                 cellType = 'number';
                 result = Number(number);
               }
-            } else if (defaults.numbers.html.decimalMark !== defaults.numbers.output.decimalMark ||
+            } 
+            else if (defaults.numbers.html.decimalMark !== defaults.numbers.output.decimalMark ||
               defaults.numbers.html.thousandsSeparator !== defaults.numbers.output.thousandsSeparator) {
               number = parseNumber(result);
 
@@ -2127,7 +2169,8 @@
                   (frac[1].length ? defaults.numbers.output.decimalMark + frac[1] : '');
               }
             }
-          } else
+          } 
+          else
             result = htmlData;
         }
 
@@ -2144,7 +2187,7 @@
 
       if (cellInfo !== undefined)
         cellInfo.type = cellType;
-
+      
       return result;
     }
 
