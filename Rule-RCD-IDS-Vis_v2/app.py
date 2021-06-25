@@ -1,5 +1,6 @@
 from flask import Flask, jsonify,render_template,request,redirect
 import json
+from numpy.core.arrayprint import printoptions
 from numpy.lib.function_base import select
 import pandas as pd
 from werkzeug.utils import secure_filename
@@ -9,6 +10,7 @@ import RCD_normal
 import os
 from sklearn import preprocessing
 import csv
+import pandas as pd
 
 app = Flask(__name__)
 pwd = os.path.dirname(__file__)
@@ -16,9 +18,16 @@ UPLOAD_FOLDER = os.path.join(pwd,'save_file')
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 Fileway = "save_file/test2.csv"
 RCDFileway = "save_file/rcd_data.csv"
+
+labelList = ['normal', 'DOS', 'PROBE', 'R2L', 'U2R']
 selected = [1, 3, 4, 5, 6, 23, 25, 28, 29, 32, 33, 36, 38, 39, 42]
+center = []
+Ures = []
+label = []
+group_num = 0
 
 def RCD(Fileway,selected):
+    global center,Ures,label
     ReadData = RCD_normal.ReadData(Fileway)
     init_data = ReadData.readData()
     select_column = [x-1 for x in selected]
@@ -33,6 +42,7 @@ def RCD(Fileway,selected):
         print("Group ",i,",Center is point",center[i])
         print("Group points are ",Ures[i])
 
+    label = ['normal' for i in range(len(init_data))]
     f = open(RCDFileway,'w',encoding='utf-8',newline="")
     csv_writer = csv.writer(f)
     tmpdata = []
@@ -63,6 +73,7 @@ def upload_file():
         filename = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         Fileway = filename
+        RCD(Fileway, selected)
         print("file uploaded successfully")
         return redirect("/")
         # return 'file uploaded successfully'
@@ -71,16 +82,17 @@ def upload_file():
 
 @app.route('/upload_features', methods=['GET', 'POST'])
 def upload_features():
-    global selected
+    global selected, label
     key = ["duration", "service", "flag", "src_bytes", "dst_bytes", "count", "serror_rate", "srv_rerror_rate",
            "same_srv_rate", "dst_host_count", "dst_host_srv_count", "dst_host_same_src_port_rate",
-           "dst_host_serror_rate", "dst_host_srv_serror_rate", "class"]
-    key_index = [1, 3, 4, 5, 6, 23, 25, 28, 29, 32, 33, 36, 38, 39, 42]
+           "dst_host_serror_rate", "dst_host_srv_serror_rate"]
+    key_index = [1, 3, 4, 5, 6, 23, 25, 28, 29, 32, 33, 36, 38, 39]
     
     selected = request.form.getlist('selected_features')
     for i in range(0,len(selected)):
         selected[i] = key_index[key.index(selected[i])]
     RCD(Fileway, selected)
+    selected.append(42)
 
     return render_template("./index.html")
 

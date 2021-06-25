@@ -63,17 +63,16 @@ class ReadData():
         
         count = 0
         sourcefp.seek(0, 0)
-        init_data = np.zeros((length,42))
+        init_data = np.zeros((length,41))
         for line in reader:
             #print("\rReadData Processing progress：%.2f%%,line number is %d" %(float((count+1)/length*100), count), end=' ')
-            tmp = np.zeros(42)
+            tmp = np.zeros(41)
             tmp[0] = line[0]
             tmp[1] = self.protocol(line[1])
             tmp[2] = self.service(line[2])
             tmp[3] = self.flag(line[3])
             for i in range(4, 41, 1):
                 tmp[i] = line[i]
-            tmp[41] = self.label(line[41])
             tmp = tmp.astype(np.float)
             init_data[count] = tmp
             count += 1
